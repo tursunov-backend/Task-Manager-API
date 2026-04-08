@@ -1,13 +1,13 @@
-import enum
+# import enum
 
 
-class TaskStatus(str, enum.Enum):
-    pending = "pending"
-    in_progress = "in_progress"
-    done = "done"
+# class TaskStatus(str, enum.Enum):
+#     pending = "pending"
+#     in_progress = "in_progress"
+#     done = "done"
 
 
-class TaskPriority(str, enum.Enum):
-    low = "low"
-    medium = "medium"
-    high = "high"
+# class TaskPriority(str, enum.Enum):
+#     low = "low"
+#     medium = "medium"
+#     high = "high"
