@@ -1,8 +1,8 @@
-
 from app.models.project import Project
 
 from sqlalchemy.orm import Session
 from app.schemas.project import ProjectCreate, ProjectUpdate
+
 
 def get_projects(db: Session, skip: int = 0, limit: int = 100):
     return db.query(Project).offset(skip).limit(limit).all()

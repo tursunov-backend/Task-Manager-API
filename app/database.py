@@ -10,7 +10,7 @@ url = URL.create(
     port=settings.db_port,
     username=settings.db_user,
     password=settings.db_pass,
-    database=settings.db_name
+    database=settings.db_name,
 )
 
 engine = create_engine(url)

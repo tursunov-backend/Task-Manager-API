@@ -18,7 +18,9 @@ class Project(Base):
     )
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
-    users: Mapped[List["User"]] = relationship("User", uselist=True, back_populates="projects")
+    users: Mapped[List["User"]] = relationship(
+        "User", uselist=True, back_populates="projects"
+    )
 
     def __str__(self):
         return f"{self.id}. {self.title}"
