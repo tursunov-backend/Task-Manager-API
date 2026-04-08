@@ -20,5 +20,5 @@ class User(Base):
         "Project", uselist=True, back_populates="users"
     )
 
-    ef __str__(self):
+    def __str__(self):
         return f"{self.id}. {self.username}"
