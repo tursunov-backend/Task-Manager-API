@@ -1,18 +1,24 @@
-from fastapi import FastAPI
+# from fastapi import FastAPI
 
-from app.database import engine, Base
-from app.models import *
-from app.routers.auth import router as auths_router
-from app.routers.projects import router as projects_router
-from app.routers.tasks import router as tasks_router
-from app.routers.users import router as users_router
+# from app.database import engine, Base
+
+# from app.routers import auth, users, projects, tasks
 
 
-Base.metadata.create_all(engine)
+# app = FastAPI(
+#     title="Task Manager API",
+#     version="1.0.0",
+# )
 
-app = FastAPI(title="TASK MANAGER API")
+# Base.metadata.create_all(bind=engine)
 
-app.include_router(auths_router)
-app.include_router(projects_router)
-app.include_router(tasks_router)
-app.include_router(users_router)
+
+# app.include_router(auth.router, prefix="/api")
+# app.include_router(users.router, prefix="/api")
+# app.include_router(projects.router, prefix="/api")
+# app.include_router(tasks.router, prefix="/api")
+
+
+# @app.get("/")
+# def root():
+#     return {"message": "API working 🚀"}
