@@ -12,7 +12,7 @@ from app.core.security import verify_password, create_access_token
 
 router = APIRouter(tags=["Auth"])
 
-@round.post("/api/register/", response_model=UserResponse)
+@router.post("/api/register/", response_model=UserResponse)
 async def get_register(
         user_in: UserCreate,
         db: Annotated[Session, Depends(get_db)]
