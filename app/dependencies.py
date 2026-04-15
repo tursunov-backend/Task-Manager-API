@@ -1,29 +1,22 @@
 from typing import Annotated
-
 from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt, JWTError
 from sqlalchemy.orm import Session
 
+from app.config import settings
 from app.database import get_db
 from app.models.user import User
-from app.crud.user import get_user
-from app.config import settings
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
+security = HTTPBearer(auto_error=True)
 
 
 def get_current_user(
-    token: Annotated[str, Depends(oauth2_scheme)],
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
     db: Annotated[Session, Depends(get_db)],
 ) -> User:
-
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
+    token = credentials.credentials
 
     try:
         payload = jwt.decode(
@@ -32,28 +25,26 @@ def get_current_user(
             algorithms=[settings.ALGORITHM],
         )
 
-        user_id: str = payload.get("sub")
+        user_id = payload.get("sub")
 
-        if user_id is None:
-            raise credentials_exception
+        if not user_id:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid token",
+            )
 
     except JWTError:
-        raise credentials_exception
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token",
+        )
 
-    user = get_user(db, int(user_id))
+    user = db.query(User).filter(User.id == int(user_id)).first()
 
-    if user is None:
-        raise credentials_exception
+    if not user or not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found or inactive",
+        )
 
     return user
-
-
-def get_current_active_user(
-    current_user: Annotated[User, Depends(get_current_user)],
-) -> User:
-    if not current_user.is_active:
-        raise HTTPException(
-            status_code=400,
-            detail="Inactive user",
-        )
-    return current_user

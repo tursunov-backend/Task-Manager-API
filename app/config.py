@@ -2,13 +2,25 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    db_host: str
-    db_port: int
-    db_user: str
-    db_pass: str
-    db_name: str
+    DB_HOST: str
+    DB_PORT: int
+    DB_USER: str
+    DB_PASS: str
+    DB_NAME: str
 
-    model_config = SettingsConfigDict(env_file=".env")
+    SECRET_KEY: str
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+
+    @property
+    def DATABASE_URL(self) -> str:
+        return (
+            f"postgresql://{self.DB_USER}:{self.DB_PASS}"
+            f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        )
 
 
 settings = Settings()

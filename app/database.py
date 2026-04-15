@@ -1,19 +1,28 @@
 from sqlalchemy import URL, create_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
+from typing import Generator
 
-from .config import settings
+from app.config import settings
 
 
 url = URL.create(
     drivername="postgresql+psycopg2",
-    host=settings.db_host,
-    port=settings.db_port,
-    username=settings.db_user,
-    password=settings.db_pass,
-    database=settings.db_name,
+    host=settings.DB_HOST,
+    port=settings.DB_PORT,
+    username=settings.DB_USER,
+    password=settings.DB_PASS,
+    database=settings.DB_NAME,
 )
 
-engine = create_engine(url, echo=False)
+
+engine = create_engine(
+    url,
+    echo=False,
+    pool_pre_ping=True,
+    pool_size=5,
+    max_overflow=10,
+)
+
 
 SessionLocal = sessionmaker(
     bind=engine,
@@ -26,7 +35,7 @@ class Base(DeclarativeBase):
     pass
 
 
-def get_db():
+def get_db() -> Generator:
     db = SessionLocal()
     try:
         yield db

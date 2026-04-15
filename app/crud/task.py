@@ -1,6 +1,7 @@
-from app.models.task import Task
-
+from datetime import datetime
 from sqlalchemy.orm import Session
+
+from app.models.task import Task
 from app.schemas.task import TaskCreate, TaskUpdate
 
 
@@ -13,8 +14,14 @@ def get_task(db: Session, task_id: int):
 
 
 def create_task(db: Session, task_in: TaskCreate):
-
-    task = Task(**task_in.model_dump())
+    task = Task(
+        title=task_in.title,
+        description=task_in.description,
+        due_date=task_in.due_date,
+        project_id=task_in.project_id,
+        assignee_id=task_in.assignee_id,
+        created_at=datetime.utcnow(),
+    )
 
     db.add(task)
     db.commit()

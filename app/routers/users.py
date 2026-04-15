@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -23,5 +23,7 @@ async def update_me_view(
     current_user: Annotated[User, Depends(get_current_user)],
     db: Annotated[Session, Depends(get_db)],
 ):
-    updated_user = update_user(db, current_user, user_in)
-    return updated_user
+    if not user_in.model_dump(exclude_unset=True):
+        raise HTTPException(status_code=400, detail="No data to update")
+
+    return update_user(db, current_user, user_in)
