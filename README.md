@@ -1,56 +1,45 @@
-# ✅ Task Manager API
+# 🚀 Task Manager API
 
-Vazifalar va loyihalarni boshqarish uchun ishlab chiqarishga tayyor REST API — **FastAPI**, **PostgreSQL** va **SQLAlchemy** asosida qurilgan.
-
----
-
-## Mundarija
-
-* [Imkoniyatlar](#imkoniyatlar)
-* [Texnologiyalar](#texnologiyalar)
-* [Loyiha tuzilmasi](#loyiha-tuzilmasi)
-* [Boshlash](#boshlash)
-
-  * [Talablar](#talablar)
-  * [O'rnatish](#ornatish)
-  * [Muhit o'zgaruvchilari](#muhit-ozgaruvchilari)
-  * [Ilovani ishga tushirish](#ilovani-ishga-tushirish)
-* [Ma'lumotlar bazasi](#malumotlar-bazasi)
-* [API umumiy ko'rinishi](#api-umumiy-korinishi)
-* [Ishlab chiqish](#ishlab-chiqish)
-* [Eslatmalar](#eslatmalar)
+Zamonaviy va samarali **Task Manager REST API** — loyihalar va vazifalarni boshqarish uchun ishlab chiqilgan backend tizim.
+**FastAPI + PostgreSQL + SQLAlchemy** asosida qurilgan.
 
 ---
 
-## Imkoniyatlar
+## 📑 Mundarija
 
-* **Loyihalar** va **Vazifalar** uchun to'liq CRUD amaliyoti
-* **Foydalanuvchilar** va autentifikatsiya (JWT)
-* Vazifalarni **holat bo'yicha boshqarish** (pending, in_progress, done)
-* **Ustuvorlik darajasi** (low, medium, high)
-* Pydantic v2 orqali avtomatik validatsiya
-* Swagger UI va ReDoc avtomatik hujjatlar
-* Toza arxitektura: models / schemas / crud / routers
-
----
-
-## Texnologiyalar
-
-| Qatlam             | Texnologiya       |
-| ------------------ | ----------------- |
-| Freymvork          | FastAPI           |
-| Dasturlash tili    | Python 3.11+      |
-| ORM                | SQLAlchemy 2.0    |
-| Ma'lumotlar bazasi | PostgreSQL        |
-| DB drayveri        | psycopg2          |
-| Validatsiya        | Pydantic v2       |
-| Auth               | JWT (python-jose) |
-| Hash               | passlib (bcrypt)  |
-| Server             | Uvicorn           |
+* [✨ Imkoniyatlar](#-imkoniyatlar)
+* [🛠 Texnologiyalar](#-texnologiyalar)
+* [📁 Loyiha tuzilmasi](#-loyiha-tuzilmasi)
+* [🚀 Boshlash](#-boshlash)
+* [🗄 Ma'lumotlar bazasi](#-malumotlar-bazasi)
+* [🌐 API umumiy ko'rinishi](#-api-umumiy-korinishi)
+* [⚠️ Eslatmalar](#️-eslatmalar)
 
 ---
 
-## Loyiha tuzilmasi
+## ✨ Imkoniyatlar
+
+* 📁 Projects va 📝 Tasks uchun to‘liq CRUD
+* 🔐 JWT asosida autentifikatsiya
+* 📊 Task status boshqaruvi (`pending`, `in_progress`, `done`)
+* 🎯 Priority tizimi (`low`, `medium`, `high`)
+* 📄 Pagination (`skip`, `limit`)
+* 🧱 Clean architecture (models / schemas / crud / routers)
+
+---
+
+## 🛠 Texnologiyalar
+
+* ⚡ FastAPI
+* 🐘 PostgreSQL
+* 🧩 SQLAlchemy 2.0
+* 📦 Pydantic v2
+* 🔐 JWT (python-jose)
+* 🔑 passlib (bcrypt)
+
+---
+
+## 📁 Loyiha tuzilmasi
 
 ```
 task-manager-api/
@@ -80,34 +69,14 @@ task-manager-api/
 │       ├── users.py
 │       ├── projects.py
 │       └── tasks.py
+├── .env.example
+├── requirements.txt
+└── README.md
 ```
 
 ---
 
-## Boshlash
-
-### Talablar
-
-* Python 3.11+
-* PostgreSQL 14+
-
----
-
-### O'rnatish
-
-```bash
-git clone https://github.com/your-username/task-manager-api.git
-cd task-manager-api
-
-python -m venv .venv
-source .venv/bin/activate
-
-pip install -r requirements.txt
-```
-
----
-
-### Ilovani ishga tushirish
+## 🚀 Boshlash
 
 ```bash
 uvicorn app.main:app --reload
@@ -115,103 +84,74 @@ uvicorn app.main:app --reload
 
 ---
 
-## Ma'lumotlar bazasi
+## 🗄 Ma'lumotlar bazasi
 
-Jadvallar avtomatik yaratiladi:
+### 📌 Sxema umumiy ko‘rinishi
 
-```python
-Base.metadata.create_all(bind=engine)
+```
+users (foydalanuvchilar)
+  id                INTEGER   PK
+  username          VARCHAR(50)   UNIQUE
+  hashed_password   VARCHAR(255)
+  is_active         BOOLEAN   DEFAULT true
+  created_at        TIMESTAMP
+
+projects (loyihalar)
+  id            INTEGER   PK
+  title         VARCHAR(255)
+  description   TEXT      (ixtiyoriy)
+  author_id     INTEGER   FK → users.id  ON DELETE CASCADE
+  created_at    TIMESTAMP
+
+tasks (vazifalar)
+  id            INTEGER   PK
+  title         VARCHAR(255)
+  description   TEXT      (ixtiyoriy)
+  status        VARCHAR(20)   DEFAULT 'pending'
+  priority      VARCHAR(10)   DEFAULT 'medium'
+  due_date      DATE      (ixtiyoriy)
+  project_id    INTEGER   FK → projects.id  ON DELETE CASCADE
+  assignee_id   INTEGER   FK → users.id    (ixtiyoriy)
+  created_at    TIMESTAMP
 ```
 
 ---
 
-### Sxema
+## 🌐 API umumiy ko‘rinishi
+
+| Method | Endpoint             | Tavsif               |
+| ------ | -------------------- | -------------------- |
+| POST   | `/api/auth/register` | Ro'yxatdan o'tish    |
+| POST   | `/api/auth/login`    | Login (token olish)  |
+| GET    | `/api/users/me`      | Joriy user           |
+| PATCH  | `/api/users/me`      | Profilni yangilash   |
+| GET    | `/api/projects/me`   | Faqat o'z loyihalari |
+| POST   | `/api/projects/`     | Loyiha yaratish      |
+| GET    | `/api/projects/{id}` | Bitta loyiha         |
+| PATCH  | `/api/projects/{id}` | Yangilash            |
+| DELETE | `/api/projects/{id}` | O‘chirish            |
+| GET    | `/api/tasks/`        | Tasklar ro‘yxati     |
+| POST   | `/api/tasks/`        | Task yaratish        |
+| GET    | `/api/tasks/{id}`    | Bitta task           |
+| PATCH  | `/api/tasks/{id}`    | Yangilash            |
+| DELETE | `/api/tasks/{id}`    | O‘chirish            |
+
+---
+
+## ⚠️ Eslatmalar
+
+* 🔐 Authorization:
 
 ```
-users
-  id
-  username
-  hashed_password
-  is_active
-  created_at
-
-projects
-  id
-  title
-  description
-  author_id   FK → users.id
-  created_at
-
-tasks
-  id
-  title
-  description
-  status
-  priority
-  due_date
-  project_id   FK → projects.id
-  assignee_id  FK → users.id
-  created_at
-```
-
----
-
-### Munosabatlar
-
-* User → Project (1)
-* Project → Task (1)
-* User → Task (assigned)
-
----
-
-## API umumiy ko'rinishi
-
-| Method | Endpoint             |
-| ------ | -------------------- |
-| POST   | `/api/auth/register` |
-| POST   | `/api/auth/login`    |
-| GET    | `/api/users/me`      |
-| PATCH  | `/api/users/me`      |
-| GET    | `/api/projects/me`   |
-| POST   | `/api/projects/`     |
-| GET    | `/api/projects/{id}` |
-| PATCH  | `/api/projects/{id}` |
-| DELETE | `/api/projects/{id}` |
-| GET    | `/api/tasks/`        |
-| POST   | `/api/tasks/`        |
-| GET    | `/api/tasks/{id}`    |
-| PATCH  | `/api/tasks/{id}`    |
-| DELETE | `/api/tasks/{id}`    |
-
----
-
-## Ishlab chiqish
-
-```bash
-pip install black ruff
-
-ruff check .
-black .
-```
-
----
-
-## Eslatmalar
-
-* Pagination: `skip`, `limit`
-* PATCH → partial update
-* Auth header:
-
-```text
 Authorization: Bearer <token>
 ```
 
-* Task status: `pending`, `in_progress`, `done`
-* Task priority: `low`, `medium`, `high`
-* Project o‘chsa → tasklar ham o‘chadi (cascade)
+* Status: `pending`, `in_progress`, `done`
+* Priority: `low`, `medium`, `high`
+* 🔁 Project o‘chirilganda → tasklar ham avtomatik o‘chadi (cascade)
 
 ---
 
 ## 👨‍💻 Muallif
 
-**Abdujalol Tursunov**
+**Abdujalol Tursunov** 🚀
