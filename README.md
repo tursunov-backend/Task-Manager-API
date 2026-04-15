@@ -117,6 +117,27 @@ tasks (vazifalar)
 
 ---
 
+## 🔗 Munosabatlar (Relationships)
+
+* 👤 **User → Project** (1:N)
+
+  * Bitta user bir nechta projectga ega bo‘lishi mumkin
+
+* 📁 **Project → Task** (1:N)
+
+  * Har bir project ichida bir nechta task bo‘ladi
+
+* 👤 **User → Task** (1:N)
+
+  * Task userga biriktiriladi (assignee)
+
+* 🔁 **Cascade qoidalari**
+
+  * Project o‘chirilsa → unga tegishli tasklar ham o‘chadi
+  * User o‘chirilsa → projectlari ham o‘chadi
+
+---
+
 ## 🌐 API umumiy ko‘rinishi
 
 | Method | Endpoint             | Tavsif               |
