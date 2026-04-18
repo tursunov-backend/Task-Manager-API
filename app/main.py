@@ -32,4 +32,4 @@ app.include_router(tasks.router, prefix=API_PREFIX)
 
 @app.get("/", tags=["Root"])
 def root():
-    return {"message": "API working 🚀"}
+    return {"message": "API working "}
